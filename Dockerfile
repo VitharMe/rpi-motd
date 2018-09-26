@@ -6,4 +6,4 @@ RUN apt-get update && apt-get upgrade -y && apt-get install toilet lolcat tcl gi
 
 COPY . /
 
-CMD ["./motd.sh"]
+CMD ["./text.sh"]
