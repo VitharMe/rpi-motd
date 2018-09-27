@@ -1,5 +1,5 @@
 #!/bin/bash
-docker run --rm -ti vitharme/rpi-motd $1
+docker run --rm -ti vitharme/rpi-motd SERVER
 SYSTEM=`uname -a | cut -d "#" -f1`
 LASTLOG=`lastlog -u $(whoami) | sed -n 2p | awk '{$2=$2};1'`
 D=$(($(cut -d. -f1 /proc/uptime)/60/60/24))
