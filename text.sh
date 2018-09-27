@@ -1,2 +1,2 @@
 #!/bin/bash
-toilet -f mono9.tlf ZION --filter border --gay
+toilet -f mono9.tlf $1 --filter border --gay
