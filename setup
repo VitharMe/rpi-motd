@@ -1,0 +1,49 @@
+#!/bin/bash
+#Check user root
+if [[ `id -u` -ne 0 ]] ; then echo "Please run as root or sudo" ; exit 1 ; fi
+#Check arguments
+if [ $# -le 1 -o $# -ge 3 ]; then
+	echo "./setup MACHINE USERNAME"
+	exit
+fi
+echo "[ Clean /etc/motd... ]"
+cat /dev/null > /etc/motd
+echo "[ Uncomment and edit /etc/ssh/sshd_config with PrintLastLog no... ]"
+cat /etc/ssh/sshd_config | grep PrintLastLog > /dev/null 2>&1
+if [ $? -eq 0 ]; then
+	cat /etc/ssh/sshd_config | grep PrintLastLog | grep "#" > /dev/null 2>&1
+	if [ $? -eq 0 ]; then
+		cat /etc/ssh/sshd_config | grep PrintLastLog | grep yes > /dev/null 2>&1
+		if [ $? -eq 0 ]; then
+			sed -i -e 's/#PrintLastLog yes/PrintLastLog no/g' /etc/ssh/sshd_config
+		else
+			sed -i -e 's/#PrintLastLog no/PrintLastLog no/g' /etc/ssh/sshd_config
+		fi
+	else
+		cat /etc/ssh/sshd_config | grep PrintLastLog | grep no > /dev/null 2>&1
+		if [ $? -eq 0 ]; then
+			echo "" > /dev/null 2>&1
+		else
+			sed -i -e 's/PrintLastLog yes/PrintLastLog no/g' /etc/ssh/sshd_config
+		fi
+	fi
+else
+	echo "PrintLastLog no" >> /etc/ssh/sshd_config
+fi
+echo "[ The line should be uncomment with a yes ]"
+grep PrintLastLog /etc/ssh/sshd_config
+# Coment line
+cat /etc/update-motd.d/10-uname | grep "#uname" > /dev/null 2>&1
+if [ $? -eq 0 ]; then
+	echo "" > /dev/null 2>&1
+else
+	sed -i -e 's/uname/#uname/g' /etc/update-motd.d/10-uname
+fi
+echo "[ The line should be commented ]"
+grep uname /etc/update-motd.d/10-uname
+echo "[ Move motd.sh to /etc/ with the machine name $1 ]"
+sed -i -e 's/SERVER/'$1'/g' ./motd.sh
+cp motd.sh /etc/motd.sh
+echo "[ Add $2 to 'video' group ]"
+usermod -a -G video $2
+echo "[ DONE ]"
