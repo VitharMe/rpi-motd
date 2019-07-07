@@ -44,6 +44,8 @@ grep uname /etc/update-motd.d/10-uname
 echo "[ Move motd.sh to /etc/ with the machine name $1 ]"
 sed -i -e 's/SERVER/'$1'/g' ./motd.sh
 cp motd.sh /etc/motd.sh
+echo "[ Add /etc/motd.sh to /etc/profile  ]"
+echo "/etc/motd.sh" >> /etc/profile
 echo "[ Add $2 to 'video' group ]"
 usermod -a -G video $2
 echo "[ DONE ]"
